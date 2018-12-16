@@ -1,0 +1,49 @@
+## Access to MySQL
+mysql -u root -p
+
+## Create a user with password
+
+create user 'bibi'@'localhost' identified by 'Pa$$w0rd';
+
+## Grant user permission on a table
+
+grant select on DBNAME.TABLENAME to 'datasync'@'localhost' identified by 'Pa$$w0rd';
+
+## Get DB and tables details
+
+show databases;
+use DBNAME;
+show tables;
+describe TABLENAME;
+
+## Select queries example
+
+SELECT table_describe1, table_describe2, table_describe3 FROM DBNAME.TABLENAME;
+
+## To search a specific column name as \ like some name
+
+SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+WHERE COLUMN_NAME LIKE '%keyWord%';
+
+## To search a table name which is similar to "keyWord"
+
+SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME LIKE '%keyWord%';
+
+## Output data to a file
+
+SELECT order_id,product_name,qty
+FROM orders
+WHERE foo = 'bar'
+INTO OUTFILE '/var/lib/mysql-files/orders.csv'
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n';
+
+SHOW FULL TABLES IN asdb WHERE TABLE_TYPE LIKE 'VIEW';
+
+use asdasd;
+DROP VIEW asdasd;
+CREATE VIEW asdasd AS SELECT * FROM asdasd;
+
+SHOW FULL TABLES IN use kasd WHERE TABLE_TYPE LIKE 'VIEW';
