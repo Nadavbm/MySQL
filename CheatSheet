@@ -1,37 +1,65 @@
-## Access to MySQL
+## Access to MySQL from terminal
 mysql -u root -p
+mysql --user=root mysql -p
 
-## Create a user with password
+User management and configuration:
+---------------------------------
+# List all users
+select User, Host from mysql.user;
+select * from mysql.user where User like '%userName%';
 
+# List all user privileges
+select * from information_schema.user_privileges;
+select tableName from dbName.sql_show_grants;
+
+# Create a user with password
 create user 'bibi'@'localhost' identified by 'Pa$$w0rd';
+create user 'dev_user'@'192.168.30.%' identified by 'ChaneMe123!';
 
-## Grant user permission on a table
-
+# Grant user permission on a table
 grant select on DBNAME.TABLENAME to 'datasync'@'localhost' identified by 'Pa$$w0rd';
+grant all privileges on *.* to 'dev_user'@'192.168.30.%';
 
-## Get DB and tables details
+# Change user password
+UPDATE mysql.user SET Password=PASSWORD(‘text password’) WHERE user=”userName” AND Host=”hostname”;
+SET PASSWORD FOR ‘userName’@’localhost’ = PASSWORD(‘text password’);
 
+Database Queries:
+----------------
+show databases;
+use DBNAME;
+CREATE DATABASE dbName;
+CREATE DATABASE dbName CHARACTER SET utf8;
+DROP DATABASE dbName;
+ALTER DATABASE dbName CHARACTER SET utf8;
+
+Tables Queries:
+--------------
+descibe tableName;
+
+
+
+# Get DB and tables details
 show databases;
 use DBNAME;
 show tables;
 describe TABLENAME;
 
-## Select queries example
+# Select queries example
 
 SELECT table_describe1, table_describe2, table_describe3 FROM DBNAME.TABLENAME;
 
-## To search a specific column name as \ like some name
+# To search a specific column name as \ like some name
 
 SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
 WHERE COLUMN_NAME LIKE '%keyWord%';
 
-## To search a table name which is similar to "keyWord"
+# To search a table name which is similar to "keyWord"
 
 SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME LIKE '%keyWord%';
 
-## Output data to a file
-
+# Output data to a file
 SELECT order_id,product_name,qty
 FROM orders
 WHERE foo = 'bar'
