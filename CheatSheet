@@ -14,7 +14,7 @@ select tableName from dbName.sql_show_grants;
 
 # Create a user with password
 create user 'bibi'@'localhost' identified by 'Pa$$w0rd';
-create user 'dev_user'@'192.168.30.%' identified by 'ChaneMe123!';
+create user 'dev_user'@'192.168.30.%' identified by 'Pa$$w0rd';
 
 # Grant user permission on a table
 grant select on DBNAME.TABLENAME to 'datasync'@'localhost' identified by 'Pa$$w0rd';
