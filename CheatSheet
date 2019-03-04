@@ -11,13 +11,14 @@ select * from mysql.user where User like '%userName%';
 # List all user privileges
 select * from information_schema.user_privileges;
 select tableName from dbName.sql_show_grants;
+SHOW GRANTS FOR 'user'@'localhost';
 
 # Create a user with password
 create user 'bibi'@'localhost' identified by 'Pa$$w0rd';
 create user 'dev_user'@'192.168.30.%' identified by 'Pa$$w0rd';
 
 # Grant user permission on a table
-grant select on DBNAME.TABLENAME to 'datasync'@'localhost' identified by 'Pa$$w0rd';
+grant select on DBNAME.TABLENAME to 'user'@'localhost' identified by 'Pa$$w0rd';
 grant all privileges on *.* to 'dev_user'@'192.168.30.%';
 
 # Change user password
@@ -75,3 +76,262 @@ DROP VIEW asdasd;
 CREATE VIEW asdasd AS SELECT * FROM asdasd;
 
 SHOW FULL TABLES IN use kasd WHERE TABLE_TYPE LIKE 'VIEW';
+
+
+
+
+
+
+
+
+USE [msdb]
+
+GO
+
+
+
+/****** Object:  Job [ESOP Logs - Drop log tables]    Script Date: 2/26/2019 9:47:16 AM ******/
+
+IF EXISTS (SELECT * FROM msdb.dbo.sysjobs where name = N'ESOP Logs - Drop log tables')
+
+EXEC msdb.dbo.sp_delete_job @job_name=N'ESOP Logs - Drop log tables', @delete_unused_schedule=1
+
+GO
+
+
+
+/****** Object:  Job [ESOP Logs - Drop log tables]    Script Date: 2/26/2019 9:47:16 AM ******/
+
+BEGIN TRANSACTION
+
+DECLARE @ReturnCode INT
+
+SELECT @ReturnCode = 0
+
+/****** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 2/26/2019 9:47:16 AM ******/
+
+IF NOT EXISTS (SELECT name FROM msdb.dbo.syscategories WHERE name=N'[Uncategorized (Local)]' AND category_class=1)
+
+BEGIN
+
+EXEC @ReturnCode = msdb.dbo.sp_add_category @class=N'JOB', @type=N'LOCAL', @name=N'[Uncategorized (Local)]'
+
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+
+
+
+END
+
+
+
+DECLARE @jobId BINARY(16)
+
+EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'ESOP Logs - Drop log tables',
+
+              @enabled=1,
+
+              @notify_level_eventlog=0,
+
+              @notify_level_email=0,
+
+              @notify_level_netsend=0,
+
+              @notify_level_page=0,
+
+              @delete_level=0,
+
+              @description=N'No description available.',
+
+              @category_name=N'[Uncategorized (Local)]',
+
+              @owner_login_name=N'sa', @job_id = @jobId OUTPUT
+
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+
+/****** Object:  Step [Drop Tables ESOP_LOG01]    Script Date: 2/26/2019 9:47:16 AM ******/
+
+EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Drop Tables ESOP_LOG01',
+
+              @step_id=1,
+
+              @cmdexec_success_code=0,
+
+              @on_success_action=3,
+
+              @on_success_step_id=0,
+
+              @on_fail_action=3,
+
+              @on_fail_step_id=0,
+
+              @retry_attempts=0,
+
+              @retry_interval=0,
+
+              @os_run_priority=0, @subsystem=N'TSQL',
+
+              @command=N'
+
+exec gspDropLogTables
+
+       @retainPeriod=''mm'',
+
+       @retainInterval = 9,
+
+       @debug=0
+
+',
+
+              @database_name=N'EOSP_LOG01',
+
+              @output_file_name=N'D:\MSSQL\drop_tables_log01.txt',
+
+              @flags=4
+
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+
+/****** Object:  Step [Drop Tables ESOP_LOG03]    Script Date: 2/26/2019 9:47:16 AM ******/
+
+EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Drop Tables ESOP_LOG03',
+
+              @step_id=2,
+
+              @cmdexec_success_code=0,
+
+              @on_success_action=3,
+
+              @on_success_step_id=0,
+
+              @on_fail_action=3,
+
+              @on_fail_step_id=0,
+
+              @retry_attempts=0,
+
+              @retry_interval=0,
+
+              @os_run_priority=0, @subsystem=N'TSQL',
+
+              @command=N'
+
+exec gspDropLogTables
+
+       @retainPeriod=''mm'',
+
+       @retainInterval = 9,
+
+       @debug=0
+
+',
+
+              @database_name=N'EOSP_LOG03',
+
+              @output_file_name=N'D:\MSSQL\drop_tables_log03.txt',
+
+              @flags=0
+
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+
+/****** Object:  Step [Drop Table CWLOG01]    Script Date: 2/26/2019 9:47:16 AM ******/
+
+EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Drop Table CWLOG01',
+
+              @step_id=3,
+
+              @cmdexec_success_code=0,
+
+              @on_success_action=1,
+
+              @on_success_step_id=0,
+
+              @on_fail_action=2,
+
+              @on_fail_step_id=0,
+
+              @retry_attempts=0,
+
+              @retry_interval=0,
+
+              @os_run_priority=0, @subsystem=N'TSQL',
+
+              @command=N'
+
+exec gspDropLogTables
+
+       @retainPeriod=''mm'',
+
+       @retainInterval = 9,
+
+       @debug=0
+
+',
+
+              @database_name=N'EOSP_CWLOG01',
+
+              @output_file_name=N'D:\MSSQL\drop_table_cwlog01.txt',
+
+              @flags=0
+
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+
+/****** Object:  Step [Drop Tables ESOP_LOG02]    Script Date: 2/26/2019 9:47:16 AM ******/
+
+EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Drop Tables ESOP_LOG02',
+
+              @step_id=4,
+
+              @cmdexec_success_code=0,
+
+              @on_success_action=3,
+
+              @on_success_step_id=0,
+
+              @on_fail_action=3,
+
+              @on_fail_step_id=0,
+
+              @retry_attempts=0,
+
+              @retry_interval=0,
+
+              @os_run_priority=0, @subsystem=N'TSQL',
+
+              @command=N'
+
+exec gspDropLogTables
+
+       @retainPeriod=''mm'',
+
+       @retainInterval = 9,
+
+       @debug=0
+
+',
+
+              @database_name=N'EOSP_LOG02',
+
+              @output_file_name=N'D:\MSSQL\drop_tables_log02.txt',
+
+              @flags=0
+
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+
+EXEC @ReturnCode = msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1
+
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+
+EXEC @ReturnCode = msdb.dbo.sp_add_jobserver @job_id = @jobId, @server_name = N'(local)'
+
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+
+COMMIT TRANSACTION
+
+GOTO EndSave
+
+QuitWithRollback:
+
+    IF (@@TRANCOUNT > 0) ROLLBACK TRANSACTION
+
+EndSave:
+
+GO
