@@ -1,44 +1,63 @@
 ## Access to MySQL from terminal
 mysql -u root -p
+
 mysql --user=root mysql -p
 
-User management and configuration:
----------------------------------
+# User management and configuration #
+# --------------------------------- #
+
 # List all users
 select User, Host from mysql.user;
+
 select * from mysql.user where User like '%userName%';
 
 # List all user privileges
 select * from information_schema.user_privileges;
+
 select tableName from dbName.sql_show_grants;
+
 SHOW GRANTS FOR 'user'@'localhost';
 
 # Create a user with password
 create user 'bibi'@'localhost' identified by 'Pa$$w0rd';
+
 create user 'dev_user'@'192.168.30.%' identified by 'Pa$$w0rd';
 
 # Grant user permission on a table
 grant select on DBNAME.TABLENAME to 'user'@'localhost' identified by 'Pa$$w0rd';
+
 grant all privileges on *.* to 'dev_user'@'192.168.30.%';
 
 # Change user password
 UPDATE mysql.user SET Password=PASSWORD(‘text password’) WHERE user=”userName” AND Host=”hostname”;
+
 SET PASSWORD FOR ‘userName’@’localhost’ = PASSWORD(‘text password’);
 
-Database Queries:
-----------------
+# Database Queries: #
+# ----------------- #
+
 show databases;
+
 use DBNAME;
+
 CREATE DATABASE dbName;
+
 CREATE DATABASE dbName CHARACTER SET utf8;
+
 DROP DATABASE dbName;
+
 ALTER DATABASE dbName CHARACTER SET utf8;
 
-Tables Queries:
---------------
+# How to get the DB size:
+SELECT table_schema "DBName",
+        ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) "DB Size in MB" 
+FROM information_schema.tables 
+GROUP BY table_schema;
+
+# Tables Queries: #
+# --------------- #
+
 descibe tableName;
-
-
 
 # Get DB and tables details
 show databases;
@@ -52,13 +71,11 @@ SELECT table_describe1, table_describe2, table_describe3 FROM DBNAME.TABLENAME;
 
 # To search a specific column name as \ like some name
 
-SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
-WHERE COLUMN_NAME LIKE '%keyWord%';
+SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME LIKE '%keyWord%';
 
 # To search a table name which is similar to "keyWord"
 
-SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME LIKE '%keyWord%';
+SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME LIKE '%keyWord%';
 
 # Output data to a file
 SELECT order_id,product_name,qty
@@ -76,3 +93,33 @@ DROP VIEW asdasd;
 CREATE VIEW asdasd AS SELECT * FROM asdasd;
 
 SHOW FULL tables in use kasd where table_type like 'VIEW';
+
+# Count rows in a table
+select COUNT(*) from tableName;
+select COUNT(*) from tableName WHERE columnAttr = someValue;
+
+# How to get the size of a table:
+SELECT 
+    table_name AS `Table`, 
+    round(((data_length + index_length) / 1024 / 1024), 2) `Size in MB` 
+FROM information_schema.TABLES 
+WHERE table_schema = "dbName"
+    AND table_name = "tableName";
+
+# How to get all table sizes:
+SELECT 
+     table_schema as `Database`, 
+     table_name AS `Table`, 
+     round(((data_length + index_length) / 1024 / 1024), 2) `Size in MB` 
+FROM information_schema.TABLES 
+ORDER BY (data_length + index_length) DESC;
+
+SELECT table_schema "DBName",
+        ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) "DB Size in MB" 
+FROM information_schema.tables 
+GROUP BY table_schema; 
+
+# List all 
+
+Functions:
+----------
