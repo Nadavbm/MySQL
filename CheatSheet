@@ -28,6 +28,8 @@ grant select on DBNAME.TABLENAME to 'user'@'localhost' identified by 'Pa$$w0rd';
 
 grant all privileges on *.* to 'dev_user'@'192.168.30.%';
 
+grant all privileges on *.* to 'user'@'10.10.10.10' with GRANT OPTION;
+
 # Change user password
 UPDATE mysql.user SET Password=PASSWORD(‘text password’) WHERE user=”userName” AND Host=”hostname”;
 
@@ -114,12 +116,37 @@ SELECT
 FROM information_schema.TABLES 
 ORDER BY (data_length + index_length) DESC;
 
-SELECT table_schema "DBName",
-        ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) "DB Size in MB" 
-FROM information_schema.tables 
-GROUP BY table_schema; 
+# Show table creation syntax
+SHOW CREATE TABLE dbName.tableName; 
 
-# List all 
 
-Functions:
-----------
+# Functions and Stored Procedure #
+# ------------------------------ #
+
+SHOW PROCEDURE STATUS;
+SHOW FUNCTION STATUS;
+
+SHOW FUNCTION STATUS WHERE DB = "dbName"
+SHOW PROCEDURE STATUS WHERE DB like '%dbName%';
+
+# Create Stored Procedure
+DELIMITER '/';
+CREATE PROCEDURE HelloWorld()
+BEGIN
+  SELECT 'Hello world' AS message;
+END/
+# Call procedure
+CALL helloWorld()
+
+# Create functions
+DELIMITER &&
+CREATE FUNCTION hello (s CHAR(20)) RETURNS CHAR(50) 
+DETERMINISTIC 
+BEGIN
+    IF s IS NULL THEN
+        RETURN CONCAT('Hello World!');
+    END IF;
+END&&
+DELIMITER ;
+# Call the function
+SELECT hello(@s);
