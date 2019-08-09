@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+# This can run via terminal
+
+# Connect to DB
+mysql -u userName -h hostName -p Pas$$w0rd 
+
+# Run command directly from linux terminal
+mysql -u userName -pPa$$w0rd -e "SELECT * FROM dbName.tableName limit 10"
+mysql -u userName -pPa$$w0rd -h 10.0.0.10 -e "SELECT column1,column2 FROM dbName.tableName WHERE column1 like '%someString%';"
+
+# Mysql Dump
+mysqldump -u root -pPa$$w0rd dbName > /path/dbName.sql
+mysqldump -u root -pPa$$w0rd dbName tableName > /path/tableNAme.sql
+mysqldump -u root -pPa$$w0rd --database dbName --tables table1,table2 --hex-blob --skip-triggers  --default-character-set=utf8 > /path/table1and2.sql
+
+# Output to files
+mysql -u userName -pPa$$word -e "SELECT * FROM mysql.user;" > /storage/location/UserList.sql
+mysql -u userName -pPa$$w0rd -e "SELECT * FROM dbName.tableName where column1 between '12345' and '23456' order by column1 desc;" > /some/path/to/file.csv 
+mysql -u userName -pPa$$w0rd -e "SELECT * FROM dbName.tableName" | sed "s/'/\'/;s/\t/\",\"/g;s/^/\"/;s/$/\"/;s/\n//g" > /some/path/to/file.csv
+
+# sed examples
+s/'/\'/          replace ' with \'
+s/\t/\",\"/g     replace all \t (tab) with ","
+s/^/\"/          at the beginning of the line place a "
+s/$/\"/          at the end of the line place a "
+s/\n//g          replace all \n (newline) with nothing
+
+# Full bash script to output something
+#!/bin/bash
+HOST="$( hostname )"
+DIR="/some/dir/"
+DATE="$( date +%F )"
+DBUSER="userName"
+DBPASS="Pa$$w0rd"
+
+TODAY="$( date -d 'today 00:00:00' '+%s%3N' )"
+YESTERDAY="$( date -d 'yesterday 00:00:00' '+%s%3N' )"
+
+FILE=outpuFileName_"${DATE}".csv
+QUERY="SELECT * FROM dbName.tableName"
+
+mysql -u "${DBUSER}" -p"${DBPASS}" -e "$QUERY" | sed "s/'/\'/;s/\t/\",\"/g;s/^/\"/;s/$/\"/;s/\n//g" > "${DIR}/${FILE}"
+
+if [[ $? -gt 0 ]];then
+
+	echo "Failed to query the DB and output to a csv file at ${DATE}"
+
+	exit 1
+fi
+
+echo "CSV created succefully at ${DATE}"
+
+exit 0
