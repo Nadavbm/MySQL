@@ -12,8 +12,7 @@ select * from information_schema.user_privileges;	List all privileges
 select tableName from dbName.sql_show_grants;
 SHOW GRANTS FOR 'user'@'localhost';
 
-create user 'bibi'@'localhost' 
-	identified by 'Pa$$w0rd';						Create User with password
+create user 'bibi'@'localhost' identified by 'Pa$$w0rd';		Create User with password
 create user 'dev_user'@'192.168.30.%' identified by 'Pa$$w0rd';
 
 UPDATE mysql.user 												
