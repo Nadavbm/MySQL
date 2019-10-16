@@ -122,12 +122,17 @@ CREATE VIEW viewName AS SELECT * FROM tableName;
 SHOW FULL tables in use kasd where table_type like 'VIEW';
 
 
-Inner Join:
-===========
+Joins:
+======
 SELECT col1,col2,col3 FORM table1,table2 WHERE table1.col1=table2.col1;
 SELECT * FROM table1 JOIN table2 ON table1.col2 = table2.col2;
 SELECT table1.col1,table2.col3,table2.col4 FROM table1,table2 WHERE table1.col4=table2.col1;
 SELECT * FROM table1 a,table2 b WHERE a.col2 BETWEEN b.col2 AND b.col3;
+SELECT * FROM table1 INNER JOIN table2 ON table1.col1 = table2.col1;
+SELECT * FROM table1 JOIN table2 ON table1.col1 = table2.col1;
+SELECT table1.col1,table1.col2,table2.col1,table2.col3 FROM table1 CROSS JOIN table2;
+SELECT table1.col1,table1.col2,table1.col3,table2.col1,table2.col2 FROM table1, table2 WHERE table1.col2 = table2.col1(+);
+SELECT * FROM table1 RIGHT JOIN table2 ON table1.col1=table2.col2;
 
 Functions and Stored Procedure:
 ===============================
