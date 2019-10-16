@@ -25,8 +25,10 @@ GRANT ALL PRIVILEGES on *.* to 'userName'@'10.10.0.%';		Grant user permissions o
 GRANT ALL PRIVILEGES on *.* to 'userName'@'10.10.10.10'; with GRANT OPTION;
 grant select on DBNAME.TABLENAME to 'user'@'localhost' identified by 'Pa$$w0rd';	
 
-Database Queries: 
-=================
+Database Queries Syntax: 
+========================
+Structure
+---------
 show databases;
 use DBNAME;
 CREATE DATABASE dbName;
@@ -42,37 +44,34 @@ GROUP BY table_schema;								Get the size of a DB
 SHOW tables;
 DESCRIBE tableName;
 SHOW COLUMNS FROM tableName;
+SHOW CREATE TABLE dbNAme.tableName;					Show columns and attributes
 
-SELECT table_describe1, table_describe2, table_describe3 FROM DBNAME.TABLENAME;
+Search
+------
+SELECT * FROM tableName;
+SELECT * FROM dbNAme.tableName;
+SELECT col1, col2, col3 FROM DBNAME.TABLENAME;
+SELECT * FROM tableName WHERE time between "00:00:00" and "00:00:34";
+SELECT * FROM tableName WHERE name like "Shmulik";
+SELECT id, name, email FROM tableName WHERE id >= 23;
+SELECT * from tableName WHERE name = 'Shmulik' OR date <= "00:00:00 20/01/2019";
+
+SELECT FROM tableName WHERE column LIKE 'email';
 
 SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME 										
 	FROM INFORMATION_SCHEMA.COLUMNS 
 	WHERE COLUMN_NAME LIKE '%keyWord%';				Search a column by keyword 
 
-SHOW COLUMNS FROM tableName1 LIKE '%keyword%';
+SHOW COLUMNS FROM tableName LIKE '%keyword%';
 
 SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME 										
 	FROM INFORMATION_SCHEMA.COLUMNS 
 	WHERE TABLE_NAME LIKE '%keyWord%';				Search atable by keyword
 
-SELECT order_id,product_name,qty FROM orders WHERE foo = 'bar'				
-	INTO OUTFILE '/var/lib/mysql-files/orders.csv'
-	FIELDS TERMINATED BY ','
-	ENCLOSED BY '"'
-	LINES TERMINATED BY '\n';						Export to csv
-
-SHOW FULL TABLES IN asdb WHERE TABLE_TYPE LIKE 'VIEW';
-
-use asdasd;
-DROP VIEW asdasd;
-CREATE VIEW asdasd AS SELECT * FROM asdasd;
-
-SHOW FULL tables in use kasd where table_type like 'VIEW';
-
-select COUNT(*) from tableName;						Count rows
+Count
+-----
+select COUNT(*) from tableName;
 select COUNT(*) from tableName WHERE columnAttr = someValue;
-
-SHOW CREATE TABLE dbName.tableName;					Show how table and columns created
 
 SELECT table_name AS `Table`,														
     round(((data_length + index_length) / 1024 / 1024), 2) `Size in MB` 
@@ -86,6 +85,49 @@ SELECT table_schema as `Database`,
 FROM information_schema.TABLES 
 ORDER BY (data_length + index_length) DESC;			Get all table sizes
 
+Syntax
+------
+SELECT * FROM tableName WHERE id <= 12 and date >= "00:00:00 10/10/2000";
+CREATE TABLE tableName (id INT(8) AUTO_INCREMENT PRIMARY KEY, name VARCHAR(30) NOT NULL, email VARCHAR(50), regdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);
+INSERT INTO tableName ('id','name','regdate') VALUES (12,'Ruzi Shmulik', '10/10/2012 00:00:00');
+UPDATE tableName SET id=13 WHERE name= 'Ruzi Shmulik';
+DELETE FROM tableName WHERE name = 'Ruzi Shmulik';
+DROP TABLE tableName;
+
+Index
+-----
+CREATE INDEX indexName ON tableName (columnName);
+CREATE UNIQUE INDEX uniqueIndex on tableName(id);
+CREATE INDEX compositeIndex on tableName(id, name);
+DROP INDEX indexName;
+
+Export
+------
+SELECT order_id,product_name,qty FROM orders WHERE foo = 'bar'				
+	INTO OUTFILE '/var/lib/mysql-files/orders.csv'
+	FIELDS TERMINATED BY ','
+	ENCLOSED BY '"'
+	LINES TERMINATED BY '\n';						Export to csv
+
+mysql -u user -pPa$$w0rd -e "SELECT * FROM dbName.table.Name limit 10" >> /some/file.csv
+
+View
+----
+SHOW FULL TABLES IN asdb WHERE TABLE_TYPE LIKE 'VIEW';
+
+USE viewName;
+DROP VIEW viewName;
+CREATE VIEW viewName AS SELECT * FROM tableName;
+
+SHOW FULL tables in use kasd where table_type like 'VIEW';
+
+
+Inner Join:
+===========
+SELECT col1,col2,col3 FORM table1,table2 WHERE table1.col1=table2.col1;
+SELECT * FROM table1 JOIN table2 ON table1.col2 = table2.col2;
+SELECT table1.col1,table2.col3,table2.col4 FROM table1,table2 WHERE table1.col4=table2.col1;
+SELECT * FROM table1 a,table2 b WHERE a.col2 BETWEEN b.col2 AND b.col3;
 
 Functions and Stored Procedure:
 ===============================
