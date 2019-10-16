@@ -40,15 +40,17 @@ SELECT table_schema "DBName",
 FROM information_schema.tables 
 GROUP BY table_schema;								Get the size of a DB
 
-descibe tableName;
-show tables;
-describe TABLENAME;
+SHOW tables;
+DESCRIBE tableName;
+SHOW COLUMNS FROM tableName;
 
 SELECT table_describe1, table_describe2, table_describe3 FROM DBNAME.TABLENAME;
 
 SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME 										
 	FROM INFORMATION_SCHEMA.COLUMNS 
 	WHERE COLUMN_NAME LIKE '%keyWord%';				Search a column by keyword 
+
+SHOW COLUMNS FROM tableName1 LIKE '%keyword%';
 
 SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME 										
 	FROM INFORMATION_SCHEMA.COLUMNS 
