@@ -1,35 +1,32 @@
 MySQL Cheat Sheet
 =================
-
-mysql -u root -p																	Access to MySQL	
+mysql -u root -p												Access to MySQL	
 mysql --user=root mysql -p
 
 User management and configuration
 =================================
-select User, Host from mysql.user;													List all users
+select User, Host from mysql.user;								List all users
 select * from mysql.user where User like '%userName%';
 
-select * from information_schema.user_privileges;									List all privileges
+select * from information_schema.user_privileges;				List all privileges
 select tableName from dbName.sql_show_grants;
 SHOW GRANTS FOR 'user'@'localhost';
 
-create user 'bibi'@'localhost' identified by 'Pa$$w0rd';							Create User with password
+create user 'bibi'@'localhost' identified by 'Pa$$w0rd';		Create User with password
 create user 'dev_user'@'192.168.30.%' identified by 'Pa$$w0rd';
 
-UPDATE mysql.user 																	Change user password
+UPDATE mysql.user 												Change user password
 	SET Password=PASSWORD('Pa$$w0rd') 
 	WHERE user="userName" And Host="Hostname";
 
-SET PASSWROD FOR 'userName'@'localhost' = PASSWORD('Pa$$w0rd');						Change password
+SET PASSWROD FOR 'userName'@'localhost' = PASSWORD('Pa$$w0rd');	Change password
 
-grant select on DBNAME.TABLENAME to 'user'@'localhost' identified by 'Pa$$w0rd';	Grant user permissions on a table
-grant all privileges on *.* to 'dev_user'@'192.168.30.%';
-grant all privileges on *.* to 'user'@'10.10.10.10' with GRANT OPTION;
-
+GRANT ALL PRIVILEGES on *.* to 'userName'@'10.10.0.%';			Grant user permissions on a table 
+GRANT ALL PRIVILEGES on *.* to 'userName'@'10.10.10.10'; with GRANT OPTION;
+grant select on DBNAME.TABLENAME to 'user'@'localhost' identified by 'Pa$$w0rd';	
 
 Database Queries: 
 =================
-
 show databases;
 use DBNAME;
 CREATE DATABASE dbName;
@@ -37,10 +34,10 @@ CREATE DATABASE dbName CHARACTER SET utf8;
 DROP DATABASE dbName;
 ALTER DATABASE dbName CHARACTER SET utf8;
 
-SELECT table_schema "DBName",														Get the size of DB
+SELECT table_schema "DBName",														
         ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) "DB Size in MB" 
 FROM information_schema.tables 
-GROUP BY table_schema;
+GROUP BY table_schema;											Get the size of a DB
 
 descibe tableName;
 show tables;
@@ -48,17 +45,19 @@ describe TABLENAME;
 
 SELECT table_describe1, table_describe2, table_describe3 FROM DBNAME.TABLENAME;
 
-SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME 										Search a column by keyword
-	FROM INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME LIKE '%keyWord%';
+SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME 										
+	FROM INFORMATION_SCHEMA.COLUMNS 
+	WHERE COLUMN_NAME LIKE '%keyWord%';							Search a column by keyword 
 
-SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME 										Search a table by keyword
-	FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME LIKE '%keyWord%';
+SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME 										
+	FROM INFORMATION_SCHEMA.COLUMNS 
+	WHERE TABLE_NAME LIKE '%keyWord%';							Search atable by keyword
 
-SELECT order_id,product_name,qty FROM orders WHERE foo = 'bar'						Export to csv
+SELECT order_id,product_name,qty FROM orders WHERE foo = 'bar'				
 	INTO OUTFILE '/var/lib/mysql-files/orders.csv'
 	FIELDS TERMINATED BY ','
 	ENCLOSED BY '"'
-	LINES TERMINATED BY '\n';
+	LINES TERMINATED BY '\n';									Export to csv
 
 SHOW FULL TABLES IN asdb WHERE TABLE_TYPE LIKE 'VIEW';
 
@@ -68,22 +67,22 @@ CREATE VIEW asdasd AS SELECT * FROM asdasd;
 
 SHOW FULL tables in use kasd where table_type like 'VIEW';
 
-select COUNT(*) from tableName;														Count rows
+select COUNT(*) from tableName;									Count rows
 select COUNT(*) from tableName WHERE columnAttr = someValue;
 
-SHOW CREATE TABLE dbName.tableName;													Show how table and columns created
+SHOW CREATE TABLE dbName.tableName;								Show how table and columns created
 
-SELECT table_name AS `Table`,														Calculate table size 
+SELECT table_name AS `Table`,														
     round(((data_length + index_length) / 1024 / 1024), 2) `Size in MB` 
 FROM information_schema.TABLES 
 WHERE table_schema = "dbName"
-    AND table_name = "tableName";
+    AND table_name = "tableName";								Calculate table size
 
-SELECT table_schema as `Database`,													Get all tables sizes 
+SELECT table_schema as `Database`,													
      table_name AS `Table`, 
      round(((data_length + index_length) / 1024 / 1024), 2) `Size in MB` 
 FROM information_schema.TABLES 
-ORDER BY (data_length + index_length) DESC;
+ORDER BY (data_length + index_length) DESC;						Get all table sizes
 
 
 Functions and Stored Procedure:
@@ -94,15 +93,15 @@ SHOW FUNCTION STATUS;
 SHOW FUNCTION STATUS WHERE DB = "dbName"
 SHOW PROCEDURE STATUS WHERE DB like '%dbName%';
 
-DELIMITER '/';																		Create a stored procedure
+DELIMITER '/';													Create a stored procedure
 CREATE PROCEDURE HelloWorld()
 BEGIN
   SELECT 'Hello world' AS message;
 END/
 
-CALL helloWorld()																	Call stored procedure
+CALL helloWorld()												Call stored procedure
 
-DELIMITER &&																		Create function
+DELIMITER &&													Create function
 CREATE FUNCTION hello (s CHAR(20)) RETURNS CHAR(50) 
 DETERMINISTIC 
 BEGIN
@@ -112,4 +111,4 @@ BEGIN
 END&&
 DELIMITER ;
 
-SELECT hello(@s);																	Call function
+SELECT hello(@s);												Call function
